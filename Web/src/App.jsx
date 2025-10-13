@@ -121,16 +121,6 @@ function App() {
             path="/scholarship/:id"
             element={<ScholarshipDetail scholarships={scholarships} />}
           />
-          <Route
-            path="/dashboard"
-            element={userToken ? <Dashboard /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/notifications"
-            element={
-              userToken ? <Notification /> : <Navigate to="/login" replace />
-            }
-          />
         </Routes>
       </BrowserRouter>
     </Provider>
