@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../homepage/profilepage.dart';
+import '../homepage/mainpage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -18,38 +18,57 @@ class _LoginPageState extends State<LoginPage> {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    final response = await http.post(
-      Uri.parse("https://scholar-zceo.onrender.com/api/user/login"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password}),
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final token = data['token']; // ✅ get token
-
+    if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login Successful!")),
+        SnackBar(content: Text("Please enter email and password")),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true; // show loading spinner
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse("https://scholar-zceo.onrender.com/api/user/login"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email, "password": password}),
       );
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProfilePage(
-            language: "EN", // or your current selected language
-            onLanguageChange: () {},
-            translate: (key) => key,
-            token: token, // ✅ pass token here
+      setState(() {
+        _isLoading = false; // hide loading spinner
+      });
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final token = data['token'];
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Login Successful!")),
+        );
+
+        // Navigate to MainPage and pass the token
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainPage(token: token),
           ),
-        ),
-      );
-    } else {
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Login failed: ${response.body}")),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login failed: ${response.body}")),
+        SnackBar(content: Text("Error: $e")),
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +79,7 @@ class _LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.all(24),
           child: Card(
             elevation: 12,
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             shadowColor: Colors.blue.shade100,
             child: Container(
               padding: EdgeInsets.all(24),
@@ -73,21 +91,26 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Welcome Back",
-                      style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade700)),
+                  Text(
+                    "Welcome Back",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade700,
+                    ),
+                  ),
                   SizedBox(height: 24),
                   TextField(
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                        labelText: "Email",
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12))),
+                      labelText: "Email",
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                   ),
                   SizedBox(height: 16),
                   TextField(
@@ -98,7 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       suffixIcon: IconButton(
                         icon: Icon(_obscurePassword
                             ? Icons.visibility_off
@@ -112,20 +136,29 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 24),
-                  _isLoading
-                      ? CircularProgressIndicator(color: Colors.blue)
-                      : ElevatedButton(
-                    onPressed: login,
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 50),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : login,
+                      style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue.shade600,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12))),
-                    child: Text("Login"),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? CircularProgressIndicator(
+                        color: Colors.white,
+                      )
+                          : Text("Login"),
+                    ),
                   ),
                   SizedBox(height: 16),
                   TextButton(
-                    onPressed: () {
+                    onPressed: _isLoading
+                        ? null
+                        : () {
                       Navigator.pushNamed(context, '/signup');
                     },
                     child: Text(

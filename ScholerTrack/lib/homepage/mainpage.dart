@@ -6,10 +6,13 @@ import 'dashboardpage.dart';
 import 'notificationpage.dart';
 
 void main() {
-  runApp(MaterialApp(home: MainPage()));
+  runApp(MaterialApp(home: MainPage(token: '',)));
 }
 
 class MainPage extends StatefulWidget {
+  final String token;
+  const MainPage({Key? key, required this.token}) : super(key: key);
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -97,7 +100,7 @@ class _MainPageState extends State<MainPage> {
     final pages = [
       HomePage(language: language, onLanguageChange: changeLanguage, translate: translate),
       SearchPage(language: language, onLanguageChange: changeLanguage, translate: translate),
-      ProfilePage(language: language, onLanguageChange: changeLanguage, translate: translate, token: '',),
+      ProfilePage(language: language, onLanguageChange: changeLanguage, translate: translate, token: widget.token,),
       DashboardPage(language: language, onLanguageChange: changeLanguage, translate: translate),
       NotificationsPage(language: language, onLanguageChange: changeLanguage, translate: translate),
     ];
