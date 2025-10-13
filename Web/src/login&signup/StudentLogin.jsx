@@ -35,7 +35,7 @@ export const StudentLogin = ({ setUserToken }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-8 bg-blue-100/50 backdrop-blur-md rounded-lg shadow-lg font-serif">
+    <div className="max-w-md mx-auto p-8 bg-blue-100/50 backdrop-blur-md rounded-lg shadow-lg font-serif">
       <h3 className="text-2xl font-semibold text-center mb-6">Student Login</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
