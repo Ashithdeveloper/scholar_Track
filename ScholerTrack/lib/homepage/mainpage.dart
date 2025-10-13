@@ -98,8 +98,8 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final pages = [
-      HomePage(language: language, onLanguageChange: changeLanguage, translate: translate),
-      SearchPage(language: language, onLanguageChange: changeLanguage, translate: translate),
+      HomePage(language: language, onLanguageChange: changeLanguage, translate: translate, token: widget.token,),
+      SearchPage(language: language, onLanguageChange: changeLanguage, translate: translate, scholarships: [],),
       ProfilePage(language: language, onLanguageChange: changeLanguage, translate: translate, token: widget.token,),
       DashboardPage(language: language, onLanguageChange: changeLanguage, translate: translate),
       NotificationsPage(language: language, onLanguageChange: changeLanguage, translate: translate),
