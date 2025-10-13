@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   IoHomeSharp,
   IoSearchSharp,
@@ -10,6 +10,7 @@ import { LuLayoutDashboard } from "react-icons/lu";
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -17,55 +18,74 @@ export const Navbar = () => {
   };
 
   const navItems = [
-    { label: "Home", icon: <IoHomeSharp className="text-2xl" />, path: "/" },
-    { label: "Search", icon: <IoSearchSharp className="text-2xl" />, path: "/search" },
-    { label: "Profile", icon: <VscAccount className="text-2xl" />, path: "/profile" },
-    { label: "Dashboard", icon: <LuLayoutDashboard className="text-2xl" />, path: "/dashboard" },
-    { label: "Notifications", icon: <IoNotificationsOutline className="text-2xl" />, path: "/notifications" },
+    { label: "Home", icon: <IoHomeSharp />, path: "/" },
+    { label: "Search", icon: <IoSearchSharp />, path: "/search" },
+    { label: "Profile", icon: <VscAccount />, path: "/profile" },
+    { label: "Dashboard", icon: <LuLayoutDashboard />, path: "/dashboard" },
+    { label: "Notifications", icon: <IoNotificationsOutline />, path: "/notifications" },
   ];
 
   return (
     <div>
-      {/* Mobile Navbar */}
-      <div className="bg-cyan-200/35 text-sm backdrop-blur-md shadow-2xl text-shadow-xl fixed w-full bottom-0 p-1 flex flex-row justify-around gap-2 items-center md:hidden">
-        {navItems.map((item, idx) => (
-          <div
-            key={idx}
-            className="flex flex-col justify-between items-center cursor-pointer"
-            onClick={() => navigate(item.path)}
-          >
-            {item.icon}
-            <span className="font-semibold text-xs">{item.label}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Desktop Navbar */}
-      <div className="hidden md:flex flex-row justify-between items-center p-4 bg-cyan-200/30 backdrop-blur-md shadow-2xl fixed w-full top-0 z-10 text-shadow-lg">
-        <div className="text-2xl font-bold italic text-blue-900">ScholarTrack</div>
-        <div className="flex flex-row gap-6 text-lg font-semibold">
-          {navItems.map((item, idx) => (
-            <span
+      {/* ================== 📱 Mobile Navbar (bottom) ================== */}
+      <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-lg shadow-lg border-t border-gray-200 flex justify-around items-center py-2 z-50">
+        {navItems.map((item, idx) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <div
               key={idx}
-              className="hover:text-blue-600 cursor-pointer"
+              className={`flex flex-col items-center justify-center cursor-pointer transition-all ${
+                isActive ? "text-blue-600" : "text-gray-600 hover:text-blue-500"
+              }`}
               onClick={() => navigate(item.path)}
             >
-              {item.label}
-            </span>
-          ))}
-        </div>
-        <div>
-          <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            onClick={logout}
-          >
-            Logout
-          </button>
-        </div>
+              <item.icon.type className="text-2xl" />
+              <span className="text-xs mt-1 font-medium">{item.label}</span>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Spacer div for fixed navbar */}
-      <div className="md:h-20 h-16" />
+      {/* ================== 💻 Medium & Large Navbar (top) ================== */}
+      <div className="hidden md:flex fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-lg shadow-md border-b border-gray-200 px-6 md:px-10 lg:px-16 py-2 md:py-3 lg:py-4 items-center justify-between">
+        {/* Logo */}
+        <div
+          className="text-xl md:text-2xl lg:text-3xl font-bold italic text-blue-900 cursor-pointer hover:text-blue-600 transition-colors"
+          onClick={() => navigate("/")}
+        >
+          ScholarTrack
+        </div>
+
+        {/* Nav Links */}
+        <div className="flex gap-4 md:gap-6 lg:gap-10 text-sm md:text-base lg:text-lg font-semibold">
+          {navItems.map((item, idx) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <span
+                key={idx}
+                className={`cursor-pointer transition-colors hover:text-blue-600 ${
+                  isActive ? "text-blue-700 underline underline-offset-4" : "text-gray-700"
+                }`}
+                onClick={() => navigate(item.path)}
+              >
+                {item.label}
+              </span>
+            );
+          })}
+        </div>
+
+        {/* Logout Button */}
+        <button
+          className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-semibold shadow-lg hover:scale-105 transition-transform duration-300"
+          onClick={logout}
+        >
+          Logout
+        </button>
+      </div>
+
+      {/* ================== 📏 Spacer ================== */}
+      {/* Creates top padding so content doesn't go under fixed navbar */}
+      <div className="h-14 md:h-16 lg:h-20" />
     </div>
   );
 };
