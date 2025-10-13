@@ -31,8 +31,8 @@ function App() {
           bodyClassName={({ type }) => (type === 'error' || type === 'success' ? 'text-white p-3' : 'text-black p-3')}
         />
           <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/login' element={<MainLogin />} />
+            <Route path='/' element={<MainLogin />} />
+            <Route path='/home' element={<Home />} />
             <Route path='/studentsignup' element={<StudentSignUp />} />
           </Routes>
   </BrowserRouter>
