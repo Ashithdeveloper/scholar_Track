@@ -1,4 +1,3 @@
-import nodemailer from "nodemailer";
 import { comparePassword, hashPassword } from "../config/passwordhashing.js";
 import User from "../model/user.model.js";
 import { generateToken } from "../Token/Token.js";
@@ -43,10 +42,6 @@ export const Student = async (req, res) => {
     }
     // Password hashing
     const hashedPassword = await hashPassword(password);
-
-    // Generate OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
     // Save user to DB
     const user = new User({
       fullname,
@@ -59,15 +54,12 @@ export const Student = async (req, res) => {
       institution,
       percentage,
       lasteducation,
-      otp,
-      otpExpires: Date.now() + 5 * 60 * 1000, // 5 mins
+      
     });
 
     await user.save();
-
-
-
-    res.status(201).json({ message: "OTP sent to your email" ,success:true });
+    const token = generateToken(user._id);
+    res.status(201).json({ message: "User created successfully" ,success:true , token});
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error" });
@@ -75,37 +67,37 @@ export const Student = async (req, res) => {
 };
 
 // Verify OTP and create token
-export const verify = async (req, res) => {
-  try {
-    const { email, otp } = req.body;
+// export const verify = async (req, res) => {
+//   try {
+//     const { email, otp } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
-    }
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(400).json({ message: "User not found" });
+//     }
 
-    // 🕒 If OTP expired, delete user and respond
-    if (user.otpExpires < Date.now()) {
-      await User.deleteOne({ email });
-      return res
-        .status(400)
-        .json({ message: "OTP expired. User deleted, please sign up again." });
-    }
+//     // 🕒 If OTP expired, delete user and respond
+//     if (user.otpExpires < Date.now()) {
+//       await User.deleteOne({ email });
+//       return res
+//         .status(400)
+//         .json({ message: "OTP expired. User deleted, please sign up again." });
+//     }
 
-    await user.save();
+//     await user.save();
 
-    const token = generateToken(user._id);
+//     const token = generateToken(user._id);
 
-    res.status(200).json({
-      message: "Email verified successfully",
-      token,
-      success: true,
-    });
-  } catch (error) {
-    console.error("OTP verification error:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
+//     res.status(200).json({
+//       message: "Email verified successfully",
+//       token,
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("OTP verification error:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 
 // Get User

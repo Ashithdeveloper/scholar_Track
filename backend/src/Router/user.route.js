@@ -1,5 +1,5 @@
 import express from "express";
-import { getMe, login, Student, verify } from "../controller/user.controller.js";
+import { getMe, login, Student } from "../controller/user.controller.js";
 import verifyToken from "../middleware/middleware.js";
 
 
@@ -7,7 +7,7 @@ const router = express.Router();
 
 //auth routes 
 router.post("/studentsignup", Student);
-router.post("/otpverify", verify);
+// router.post("/otpverify", verify);
 router.post("/login", login);
 
 
