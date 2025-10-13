@@ -88,6 +88,8 @@ class _SignupPageState extends State<SignupPage> {
       setState(() => _isLoading = false);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final token = data['token']; // ✅ get token
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Signup successful! Redirecting..."),
@@ -99,7 +101,7 @@ class _SignupPageState extends State<SignupPage> {
         Future.delayed(Duration(seconds: 1), () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => MainPage()),
+            MaterialPageRoute(builder: (context) => MainPage(token: '',)),
           );
         });
       } else {
