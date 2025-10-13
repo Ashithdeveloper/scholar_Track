@@ -9,7 +9,7 @@ export const Navbar = () => {
   return (
     <div>
         <div className='bg-cyan-200/35 text-sm backdrop-blur-md shadow-2xl text-shadow-xl fixed w-full bottom-0 p-1 flex flex-row justify-around gap-2 items-center md:hidden'>
-           <div className='flex flex-col justify-between' onClick={() => navigate("/")}>
+           <div className='flex flex-col justify-between' onClick={() => navigate("/home")}>
                 <span className='font-semibold gap-1.5'><IoHomeSharp className='text-xl m-2' />Home</span>
            </div>
            <div className='flex flex-col justify-between'>
