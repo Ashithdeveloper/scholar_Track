@@ -19,7 +19,7 @@ export const StudentLogin = () => {
     try {
       const res = await client.apiPost('/api/user/login', { email, password })
       toast.success(res.message || 'Login successful', {
-        onClose: () => navigate('/')
+        onClose: () => navigate('/home')
       })
 
       // ✅ Save token to localStorage
