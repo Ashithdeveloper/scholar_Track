@@ -14,7 +14,7 @@ function App() {
   <BrowserRouter>
         <ToastContainer
           position="top-center"
-          autoClose={3000}
+          autoClose={1000}
           hideProgressBar={true}
           // outer toast container styling (glass + color by type)
           toastClassName={({ type }) =>
