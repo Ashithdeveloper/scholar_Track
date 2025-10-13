@@ -12,7 +12,9 @@ import { ScholarshipDetail } from "./screen/ScholarshipDetails";
 import { Dashboard } from "./screen/Dashboard";
 import { Notification } from "./screen/Notification";
 import { SearchPage } from "./layouts/Search";
-import { Chatbot } from "./Chatbot"; 
+import { Chatbot } from "./Chatbot";
+import { FloatingCommunityButton } from "./layouts/CommunityButton"; 
+import { CommunityForum } from "./CommuntiyForum"; 
 import { useState, useEffect } from "react";
 import client from "./api/client";
 
@@ -50,11 +52,13 @@ function App() {
     setUserToken(null);
   };
 
-  const PrivateRoute = ({ children }) => userToken ? children : <Navigate to="/login" replace />;
+  const PrivateRoute = ({ children }) =>
+    userToken ? children : <Navigate to="/login" replace />;
 
   return (
     <Provider store={store}>
       <BrowserRouter>
+        {/* Toast notifications */}
         <ToastContainer
           position="top-center"
           autoClose={1000}
@@ -72,21 +76,98 @@ function App() {
           }
         />
 
+        {/* Navbar */}
         {userToken && <Navbar handleLogout={handleLogout} />}
 
+        {/* Routes */}
         <Routes>
-          <Route path="/" element={<PrivateRoute><Home userToken={userToken} scholarships={scholarships} setScholarships={setScholarships} loading={loading} /></PrivateRoute>} />
-          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-          <Route path="/notifications" element={<PrivateRoute><Notification /></PrivateRoute>} />
-          <Route path="/profile" element={<PrivateRoute><Profilepage userToken={userToken} /></PrivateRoute>} />
-          <Route path="/search" element={<PrivateRoute><SearchPage scholarships={scholarships} /></PrivateRoute>} />
-          <Route path="/scholarship/:id" element={<PrivateRoute><ScholarshipDetail scholarships={scholarships} /></PrivateRoute>} />
-          <Route path="/login" element={userToken ? <Navigate to="/" replace /> : <MainLogin setUserToken={setUserToken} />} />
-          <Route path="/studentsignup" element={userToken ? <Navigate to="/" replace /> : <StudentSignUp setUserToken={setUserToken} />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Home
+                  userToken={userToken}
+                  scholarships={scholarships}
+                  setScholarships={setScholarships}
+                  loading={loading}
+                />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <PrivateRoute>
+                <Notification />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profilepage userToken={userToken} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/search"
+            element={
+              <PrivateRoute>
+                <SearchPage scholarships={scholarships} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/scholarship/:id"
+            element={
+              <PrivateRoute>
+                <ScholarshipDetail scholarships={scholarships} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/community"
+            element={
+              <PrivateRoute>
+                <CommunityForum />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              userToken ? <Navigate to="/" replace /> : <MainLogin setUserToken={setUserToken} />
+            }
+          />
+          <Route
+            path="/studentsignup"
+            element={
+              userToken ? (
+                <Navigate to="/" replace />
+              ) : (
+                <StudentSignUp setUserToken={setUserToken} />
+              )
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
-        {userToken && <Chatbot />}
+        {/* Floating Buttons */}
+        {userToken && (
+          <>
+            <Chatbot /> {/* Chatbot button */}
+            <FloatingCommunityButton /> {/* Community Forum button */}
+          </>
+        )}
       </BrowserRouter>
     </Provider>
   );

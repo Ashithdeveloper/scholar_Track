@@ -34,8 +34,8 @@ export const Navbar = ({ handleLogout }) => {
 
       {/* Desktop Navbar */}
       <div className="hidden md:flex fixed top-0 left-0 w-full bg-white/80 backdrop-blur-lg border-b border-gray-200 shadow-sm px-8 py-3 items-center justify-between z-50">
-        <div onClick={() => navigate("/")} className="text-2xl font-bold italic text-blue-900 cursor-pointer hover:text-blue-600 transition-all duration-300">ScholarTrack</div>
-        <div className="flex gap-6 font-semibold text-gray-700">
+        <div onClick={() => navigate("/")} className="md:text-lg lg:text-2xl font-bold italic text-blue-900 cursor-pointer hover:text-blue-600 transition-all duration-300">ScholarTrack</div>
+        <div className="flex gap-0.5 font-semibold lg:gap-6 text-gray-700">
           {navItems.map((item, idx) => {
             const isActive = location.pathname === item.path;
             const Icon = item.icon;
@@ -47,7 +47,7 @@ export const Navbar = ({ handleLogout }) => {
             );
           })}
         </div>
-        <button onClick={handleLogout} className="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-md hover:scale-105 hover:shadow-lg transition-transform">Logout</button>
+        <button onClick={handleLogout} className="md:px-2 lg:px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-md hover:scale-105 hover:shadow-lg transition-transform">Logout</button>
       </div>
 
       <div className="h-20 md:h-24" /> {/* Spacer */}
