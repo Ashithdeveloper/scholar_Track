@@ -9,6 +9,8 @@ import { Home } from "./Home";
 import Profilepage from "./screen/Profilepage";
 import { Navbar } from "./layouts/Navbar";
 import { ScholarshipDetail } from "./screen/ScholarshipDetails";
+import { Dashboard } from "./screen/Dashboard";
+import { Notification } from "./screen/Notification";
 import { useState, useEffect } from "react";
 import client from "./api/client";
 
@@ -17,13 +19,11 @@ function App() {
   const [scholarships, setScholarships] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Load token on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) setUserToken(token);
   }, []);
 
-  // Fetch scholarships
   const getScholarships = async () => {
     try {
       setLoading(true);
@@ -68,6 +68,7 @@ function App() {
               : "text-black p-3"
           }
         />
+
         <Navbar handleLogout={handleLogout} />
 
         <Routes>
@@ -119,6 +120,16 @@ function App() {
           <Route
             path="/scholarship/:id"
             element={<ScholarshipDetail scholarships={scholarships} />}
+          />
+          <Route
+            path="/dashboard"
+            element={userToken ? <Dashboard /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/notifications"
+            element={
+              userToken ? <Notification /> : <Navigate to="/login" replace />
+            }
           />
         </Routes>
       </BrowserRouter>
