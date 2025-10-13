@@ -30,7 +30,8 @@ Each scholarship must include the following fields:
 
 {
   "scholarship_name": "",
-  "provider": "",
+  "providerName ": "",
+  "provider_sector : private or government or international ",
   "scholar_prize": "",
   "deadline": "",
   "description": "Provide a detailed description including the purpose of the scholarship, who it is intended for, eligibility nuances, focus areas, and any special notes or requirements.",
