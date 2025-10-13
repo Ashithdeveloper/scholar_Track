@@ -38,6 +38,11 @@ export const Navbar = () => {
       icon: <IoNotificationsOutline className="text-2xl" />,
       path: "/notifications",
     },
+    {
+      label: "community page",
+      icon: <VscAccount className="text-2xl" />,
+      path: null,
+    },
   ];
 
   return (

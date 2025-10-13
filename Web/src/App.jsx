@@ -120,6 +120,10 @@ function App() {
             path="/scholarship/:id"
             element={<ScholarshipDetail scholarships={scholarships} />}
           />
+          {/* <Route
+            path="/Dashboard"
+            element={<Dashboard scholarships={scholarships} />}
+          /> */}
         </Routes>
       </BrowserRouter>
     </Provider>
