@@ -11,19 +11,32 @@ import { LuLayoutDashboard } from "react-icons/lu";
 export const Navbar = () => {
   const navigate = useNavigate();
 
-  const logout = ()=>{
-    localStorage.removeItem('token')
-    navigate('/login')
-  }
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   const navItems = [
     { label: "Home", icon: <IoHomeSharp className="text-2xl" />, path: "/" },
-    { label: "Search", icon: <IoSearchSharp className="text-2xl" /> },
-    { label: "Profile", icon: <VscAccount className="text-2xl" /> },
-    { label: "Dashboard", icon: <LuLayoutDashboard className="text-2xl" /> },
+    {
+      label: "Search",
+      icon: <IoSearchSharp className="text-2xl" />,
+      path: "/search",
+    },
+    {
+      label: "Profile",
+      icon: <VscAccount className="text-2xl" />,
+      path: "/profile",
+    },
+    {
+      label: "Dashboard",
+      icon: <LuLayoutDashboard className="text-2xl" />,
+      path: "/dashboard",
+    },
     {
       label: "Notifications",
       icon: <IoNotificationsOutline className="text-2xl" />,
+      path: "/notifications",
     },
   ];
 
@@ -45,7 +58,10 @@ export const Navbar = () => {
 
       {/* Desktop Navbar */}
       <nav className="hidden md:flex fixed top-0 w-full bg-white/70 backdrop-blur-lg shadow-lg border-b border-gray-200 px-8 py-3 items-center justify-between z-50">
-        <div className="text-3xl font-bold italic text-blue-900">
+        <div
+          className="text-3xl font-bold italic text-blue-900 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           ScholarTrack
         </div>
         <ul className="flex gap-8 text-lg font-semibold">
@@ -62,7 +78,7 @@ export const Navbar = () => {
         </ul>
         <button
           className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          onClick={() => logout()}
+          onClick={logout}
         >
           Logout
         </button>

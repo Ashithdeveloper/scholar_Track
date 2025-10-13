@@ -6,21 +6,42 @@ import { ToastContainer } from "react-toastify";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import { Home } from "./Home";
-import { useState, useEffect } from "react";
 import Profilepage from "./screen/Profilepage";
+import { Navbar } from "./layouts/Navbar";
+import { ScholarshipDetail } from "./screen/ScholarshipDetails";
+import { useState, useEffect } from "react";
+import client from "./api/client";
 
 function App() {
   const [userToken, setUserToken] = useState(null);
+  const [scholarships, setScholarships] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Load token on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      setUserToken(token);
-      console.log("Token loaded:", token);
-    }
+    if (token) setUserToken(token);
   }, []);
 
-  // Logout function
+  // Fetch scholarships
+  const getScholarships = async () => {
+    try {
+      setLoading(true);
+      const res = await client.apiGet("/api/scholarship/", {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+      setScholarships(res.scholarships || []);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userToken) getScholarships();
+  }, [userToken]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUserToken(null);
@@ -32,8 +53,7 @@ function App() {
         <ToastContainer
           position="top-center"
           autoClose={1000}
-          hideProgressBar={true}
-          // outer toast container styling (glass + color by type)
+          hideProgressBar
           toastClassName={({ type }) =>
             `backdrop-blur-md border rounded-md p-3 m-2 shadow-lg max-w-lg w-full ` +
             (type === "error"
@@ -48,21 +68,24 @@ function App() {
               : "text-black p-3"
           }
         />
+        <Navbar handleLogout={handleLogout} />
 
         <Routes>
-          {/* Protected Home route */}
           <Route
             path="/"
             element={
               userToken ? (
-                <Home userToken={userToken} handleLogout={handleLogout} />
+                <Home
+                  userToken={userToken}
+                  scholarships={scholarships}
+                  setScholarships={setScholarships}
+                  loading={loading}
+                />
               ) : (
                 <Navigate to="/login" replace />
               )
             }
           />
-
-          {/* Login route */}
           <Route
             path="/login"
             element={
@@ -73,8 +96,6 @@ function App() {
               )
             }
           />
-
-          {/* Student signup route */}
           <Route
             path="/studentsignup"
             element={
@@ -85,7 +106,20 @@ function App() {
               )
             }
           />
-          <Route path="/profile" element={<Profilepage/>} />
+          <Route
+            path="/profile"
+            element={
+              userToken ? (
+                <Profilepage userToken={userToken} />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+          <Route
+            path="/scholarship/:id"
+            element={<ScholarshipDetail scholarships={scholarships} />}
+          />
         </Routes>
       </BrowserRouter>
     </Provider>
