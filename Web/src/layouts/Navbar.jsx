@@ -18,89 +18,82 @@ export const Navbar = () => {
   };
 
   const navItems = [
-    { label: "Home", icon: <IoHomeSharp className="text-2xl" />, path: "/" },
-    {
-      label: "Search",
-      icon: <IoSearchSharp className="text-2xl" />,
-      path: "/search",
-    },
-    {
-      label: "Profile",
-      icon: <VscAccount className="text-2xl" />,
-      path: "/profile",
-    },
-    {
-      label: "Dashboard",
-      icon: <LuLayoutDashboard className="text-2xl" />,
-      path: "/dashboard",
-    },
+    { label: "Home", icon: IoHomeSharp, path: "/" },
+    { label: "Search", icon: IoSearchSharp, path: "/search" },
+    { label: "Dashboard", icon: LuLayoutDashboard, path: "/dashboard" },
     {
       label: "Notifications",
-      icon: <IoNotificationsOutline className="text-2xl" />,
+      icon: IoNotificationsOutline,
       path: "/notifications",
     },
+    { label: "Profile", icon: VscAccount, path: "/profile" },
   ];
 
   return (
     <div>
-      {/* ================== 📱 Mobile Navbar (bottom) ================== */}
+      {/* ================== 📱 Mobile Navbar (Bottom) ================== */}
       <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-lg shadow-lg border-t border-gray-200 flex justify-around items-center py-2 z-50">
         {navItems.map((item, idx) => {
+          const Icon = item.icon;
           const isActive = location.pathname === item.path;
           return (
             <div
               key={idx}
-              className={`flex flex-col items-center justify-center cursor-pointer transition-all ${
-                isActive ? "text-blue-600" : "text-gray-600 hover:text-blue-500"
-              }`}
               onClick={() => navigate(item.path)}
+              className={`flex flex-col items-center justify-center transition-all cursor-pointer ${
+                isActive
+                  ? "text-blue-600 scale-110"
+                  : "text-gray-600 hover:text-blue-500"
+              }`}
             >
-              <item.icon.type className="text-2xl" />
+              <Icon className="text-2xl" />
               <span className="text-xs mt-1 font-medium">{item.label}</span>
             </div>
           );
         })}
       </div>
 
-      {/* ================== 💻 Medium & Large Navbar (top) ================== */}
-      <div className="hidden md:flex fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-lg shadow-md border-b border-gray-200 px-6 md:px-10 lg:px-16 py-2 md:py-3 lg:py-4 items-center justify-between">
+      {/* ================== 💻 Desktop Navbar (Top) ================== */}
+      <div className="hidden md:flex fixed top-0 left-0 w-full bg-white/80 backdrop-blur-lg border-b border-gray-200 shadow-sm px-6 md:px-10 lg:px-16 py-3 items-center justify-between z-50">
         {/* Logo */}
         <div
-          className="text-xl md:text-2xl lg:text-3xl font-bold italic text-blue-900 cursor-pointer hover:text-blue-600 transition-colors"
           onClick={() => navigate("/")}
+          className="text-2xl lg:text-3xl font-bold italic text-blue-900 cursor-pointer hover:text-blue-600 transition-all duration-300"
         >
           ScholarTrack
         </div>
 
-        {/* Nav Links */}
-        <div className="flex gap-4 md:gap-6 lg:gap-10 text-sm md:text-base lg:text-lg font-semibold">
+        {/* Navigation Links */}
+        <div className="flex gap-6 lg:gap-10 font-semibold text-gray-700">
           {navItems.map((item, idx) => {
             const isActive = location.pathname === item.path;
             return (
-              <span
+              <div
                 key={idx}
-                className={`cursor-pointer transition-colors hover:text-blue-600 ${
-                  isActive ? "text-blue-700 underline underline-offset-4" : "text-gray-700"
-                }`}
                 onClick={() => navigate(item.path)}
+                className={`flex items-center gap-2 cursor-pointer transition-all ${
+                  isActive
+                    ? "text-blue-700 underline underline-offset-8"
+                    : "hover:text-blue-600"
+                }`}
               >
-                {item.label}
-              </span>
+                <item.icon className="text-lg" />
+                <span className="hidden sm:inline">{item.label}</span>
+              </div>
             );
           })}
         </div>
 
         {/* Logout Button */}
         <button
-          className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-semibold shadow-lg hover:scale-105 transition-transform duration-300"
           onClick={logout}
+          className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-md hover:scale-105 transition-transform duration-300"
         >
           Logout
         </button>
       </div>
 
-      {/* ================== 📏 Spacer ================== */}
-      {/* Creates top padding so content doesn't go under fixed navbar */}
+      {/* Spacer to prevent content overlap with fixed navbar */}
       <div className="h-14 md:h-16 lg:h-20" />
     </div>
   );
