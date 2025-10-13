@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import { Home } from "./Home";
 import { useState, useEffect } from "react";
+import Profilepage from "./screen/Profilepage";
 
 function App() {
   const [userToken, setUserToken] = useState(null);
@@ -30,14 +31,9 @@ function App() {
       <BrowserRouter>
         <ToastContainer
           position="top-center"
-<<<<<<< HEAD
-          autoClose={3000}
-          hideProgressBar
-=======
           autoClose={1000}
           hideProgressBar={true}
           // outer toast container styling (glass + color by type)
->>>>>>> 625b96cc03bf95170ff0d14951116b41c9b4db82
           toastClassName={({ type }) =>
             `backdrop-blur-md border rounded-md p-3 m-2 shadow-lg max-w-lg w-full ` +
             (type === "error"
@@ -52,7 +48,6 @@ function App() {
               : "text-black p-3"
           }
         />
-<<<<<<< HEAD
 
         <Routes>
           {/* Protected Home route */}
@@ -90,21 +85,11 @@ function App() {
               )
             }
           />
+          <Route path="/profile" element={<Profilepage/>} />
         </Routes>
       </BrowserRouter>
     </Provider>
   );
-=======
-          <Routes>
-            <Route path='/' element={<MainLogin />} />
-            <Route path='/home' element={<Home />} />
-            <Route path='/studentsignup' element={<StudentSignUp />} />
-          </Routes>
-  </BrowserRouter>
-  </Provider>
-    </>
-  )
->>>>>>> 625b96cc03bf95170ff0d14951116b41c9b4db82
 }
 
 export default App;

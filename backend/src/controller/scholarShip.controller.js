@@ -74,13 +74,6 @@ Only output the JSON array. Do not include explanations or extra text.
     // Step 5: Return Gemini response + user data
     res.status(200).json({
       success: true,
-      user: {
-        name: user.name,
-        caste: user.caste,
-        percentage: user.percentage,
-        institution: user.institution,
-        lasteducation: user.lasteducation,
-      },
       scholarships,
     });
   } catch (error) {
