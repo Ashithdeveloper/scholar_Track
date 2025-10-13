@@ -54,11 +54,12 @@ export const ScholarshipDetail = ({ scholarships }) => {
             {scholar["providerName "] || "Unknown Provider"}
           </p>
 
-          <div className="mt-6 flex flex-col sm:flex-row gap-4 sm:gap-6">
-            <span className="bg-white/20 px-4 py-2 rounded-full font-semibold text-center">
+          {/* Prize & Deadline Badges */}
+          <div className="mt-6 flex flex-wrap gap-3 sm:gap-6">
+            <span className="bg-white/20 px-5 py-2 min-w-[150px] rounded-full font-semibold text-center whitespace-nowrap">
               Prize: {scholar.scholar_prize}
             </span>
-            <span className="bg-white/20 px-4 py-2 rounded-full font-semibold text-center">
+            <span className="bg-white/20 px-5 py-2 min-w-[150px] rounded-full font-semibold text-center whitespace-nowrap">
               Deadline: {scholar.deadline}
             </span>
           </div>
@@ -66,7 +67,7 @@ export const ScholarshipDetail = ({ scholarships }) => {
 
         {/* Content Sections */}
         <div className="p-8 md:p-12 space-y-12">
-          {/** Section Component */}
+          {/* Common Sections */}
           {[
             { title: "Description", content: scholar.description },
             { title: "Eligibility Criteria", content: scholar.eligibility_criteria },
