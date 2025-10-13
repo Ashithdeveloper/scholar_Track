@@ -21,17 +21,13 @@ export const Navbar = () => {
     { label: "Home", icon: IoHomeSharp, path: "/" },
     { label: "Search", icon: IoSearchSharp, path: "/search" },
     { label: "Dashboard", icon: LuLayoutDashboard, path: "/dashboard" },
-    {
-      label: "Notifications",
-      icon: IoNotificationsOutline,
-      path: "/notifications",
-    },
+    { label: "Notifications", icon: IoNotificationsOutline, path: "/notifications" },
     { label: "Profile", icon: VscAccount, path: "/profile" },
   ];
 
   return (
     <div>
-      {/* ================== 📱 Mobile Navbar (Bottom) ================== */}
+      {/* ================== 📱 Mobile Navbar ================== */}
       <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-lg shadow-lg border-t border-gray-200 flex justify-around items-center py-2 z-50">
         {navItems.map((item, idx) => {
           const Icon = item.icon;
@@ -40,10 +36,8 @@ export const Navbar = () => {
             <div
               key={idx}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center justify-center transition-all cursor-pointer ${
-                isActive
-                  ? "text-blue-600 scale-110"
-                  : "text-gray-600 hover:text-blue-500"
+              className={`flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ${
+                isActive ? "text-blue-600 scale-110" : "text-gray-600 hover:text-blue-500"
               }`}
             >
               <Icon className="text-2xl" />
@@ -53,32 +47,33 @@ export const Navbar = () => {
         })}
       </div>
 
-      {/* ================== 💻 Desktop Navbar (Top) ================== */}
-      <div className="hidden md:flex fixed top-0 left-0 w-full bg-white/80 backdrop-blur-lg border-b border-gray-200 shadow-sm px-6 md:px-10 lg:px-16 py-3 items-center justify-between z-50">
+      {/* ================== 💻 Medium & Large Navbar ================== */}
+      <div className="hidden md:flex fixed top-0 left-0 w-full bg-white/80 backdrop-blur-lg border-b border-gray-200 shadow-sm px-6 sm:px-8 md:px-10 lg:px-16 py-3 items-center justify-between z-50">
         {/* Logo */}
         <div
           onClick={() => navigate("/")}
-          className="text-2xl lg:text-3xl font-bold italic text-blue-900 cursor-pointer hover:text-blue-600 transition-all duration-300"
+          className="text-2xl p-1.5 lg:text-3xl font-bold italic text-blue-900 cursor-pointer hover:text-blue-600 transition-all duration-300"
         >
           ScholarTrack
         </div>
 
         {/* Navigation Links */}
-        <div className="flex gap-6 lg:gap-10 font-semibold text-gray-700">
+        <div className="flex gap-4 sm:gap-5 md:gap-6 lg:gap-10 font-semibold text-gray-700">
           {navItems.map((item, idx) => {
             const isActive = location.pathname === item.path;
+            const Icon = item.icon;
             return (
               <div
                 key={idx}
                 onClick={() => navigate(item.path)}
-                className={`flex items-center gap-2 cursor-pointer transition-all ${
+                className={`flex items-center gap-2 px-3 py-1 rounded-lg cursor-pointer transition-all duration-300 ${
                   isActive
-                    ? "text-blue-700 underline underline-offset-8"
-                    : "hover:text-blue-600"
+                    ? "text-blue-700 bg-blue-50 shadow-sm scale-105"
+                    : "hover:text-blue-600 hover:bg-gray-100"
                 }`}
               >
-                <item.icon className="text-lg" />
-                <span className="hidden sm:inline">{item.label}</span>
+                <Icon className="text-xl md:text-xl" />
+                <span className="hidden sm:inline text-sm md:text-base">{item.label}</span>
               </div>
             );
           })}
@@ -87,14 +82,14 @@ export const Navbar = () => {
         {/* Logout Button */}
         <button
           onClick={logout}
-          className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-md hover:scale-105 transition-transform duration-300"
+          className="px-4 md:px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-300 text-sm md:text-base"
         >
           Logout
         </button>
       </div>
 
-      {/* Spacer to prevent content overlap with fixed navbar */}
-      <div className="h-14 md:h-16 lg:h-20" />
+      {/* Spacer to prevent content overlap */}
+      <div className="h-14 sm:h-16 md:h-20" />
     </div>
   );
 };
