@@ -54,11 +54,11 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ProfileItem label="Email" value={user.email} />
             <ProfileItem label="Phone Number" value={user.phoneNumber} />
-            <ProfileItem label="Gender" value={user.gender} />
+            <ProfileItem label="Gender" value={user.gender.charAt(0).toUpperCase() + user.gender.slice(1)} />
             <ProfileItem label="Category" value={user.category} />
             <ProfileItem label="Caste" value={user.caste} />
             <ProfileItem label="Institution" value={user.institution} />
-            <ProfileItem label="Last Education" value={user.lasteducation} />
+            <ProfileItem label="Last Education" value={user.lasteducation.toUpperCase()} />
             <ProfileItem label="Percentage" value={`${user.percentage}%`} />
           </div>
 
