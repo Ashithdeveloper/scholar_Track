@@ -30,7 +30,8 @@ Each scholarship must include the following fields:
 
 {
   "scholarship_name": "",
-  "provider": "",
+  "providerName ": "",
+  "provider_sector : private or government or international ",
   "scholar_prize": "",
   "deadline": "",
   "description": "Provide a detailed description including the purpose of the scholarship, who it is intended for, eligibility nuances, focus areas, and any special notes or requirements.",
@@ -73,13 +74,6 @@ Only output the JSON array. Do not include explanations or extra text.
     // Step 5: Return Gemini response + user data
     res.status(200).json({
       success: true,
-      user: {
-        name: user.name,
-        caste: user.caste,
-        percentage: user.percentage,
-        institution: user.institution,
-        lasteducation: user.lasteducation,
-      },
       scholarships,
     });
   } catch (error) {

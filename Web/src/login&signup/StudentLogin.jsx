@@ -1,81 +1,84 @@
-import React, { useState } from 'react'
-import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
-import client from '../api/client'  // Axios wrapper
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import client from "../api/client"; // Axios wrapper
 
-export const StudentLogin = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const navigate = useNavigate()
+export const StudentLogin = ({ setUserToken }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
 
-    if (!email) return setError('Email is required')
-    if (!password) return setError('Password is required')
+    if (!email) return setError("Email is required");
+    if (!password) return setError("Password is required");
 
     try {
-      const res = await client.apiPost('/api/user/login', { email, password })
-      toast.success(res.message || 'Login successful', {
-        onClose: () => navigate('/home')
-      })
+      const res = await client.apiPost("/api/user/login", { email, password });
 
-      // ✅ Save token to localStorage
       if (res.token) {
-        localStorage.setItem('token', res.token)
+        localStorage.setItem("token", res.token);
+        setUserToken(res.token); // Update App state
       }
+
+      toast.success(res.message || "Login successful", {
+        onClose: () => navigate("/"),
+      });
     } catch (err) {
-      const resp = err.response?.data || err.original?.response?.data
-      console.error('Login error:', resp || err)
-      toast.error(resp?.message || 'Login failed')
+      const resp = err.response?.data || err.original?.response?.data;
+      console.error("Login error:", resp || err);
+      toast.error(resp?.message || "Login failed");
     }
-  }
+  };
 
   return (
-    <div className="m-4 p-10 font-serif bg-blue-100/50 rounded-md shadow-md flex flex-col items-stretch max-w-md mx-auto">
-      <h3 className="text-lg font-semibold mb-3 text-center">Student Login</h3>
-      <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="max-w-md mx-auto mt-20 p-8 bg-blue-100/50 backdrop-blur-md rounded-lg shadow-lg font-serif">
+      <h3 className="text-2xl font-semibold text-center mb-6">Student Login</h3>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium">Email</label>
+          <label className="block text-sm font-medium mb-1">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full mt-1 px-3 py-2 border rounded-md"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="you@student.edu"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Password</label>
+          <label className="block text-sm font-medium mb-1">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full mt-1 px-3 py-2 border rounded-md"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="••••••••"
           />
         </div>
 
-        {error && <div className="text-sm text-red-600">{error}</div>}
+        {error && <div className="text-red-600 text-sm">{error}</div>}
 
-        <div className="flex flex-col justify-center space-y-1.5">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Sign in
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors"
+        >
+          Sign in
+        </button>
       </form>
-      <button
-        className="text-sm md:text-md mt-3 underline text-blue-600"
-        onClick={() => navigate("/studentsignup")}
-      >
-        New Student Registration?
-      </button>
+
+      <div className="text-center mt-4">
+        <button
+          className="text-blue-600 underline text-sm hover:text-blue-700"
+          onClick={() => navigate("/studentsignup")}
+        >
+          New Student Registration?
+        </button>
+      </div>
     </div>
-  )
-}
+  );
+};
