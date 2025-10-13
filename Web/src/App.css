@@ -1,6 +1,6 @@
 
 /* Animated gradient background for the app */
-body, .app-bg {
+.app-bg {
 	background: linear-gradient(120deg, #f6d365 0%, #fda085 25%, #a1c4fd 50%, #c2e9fb 75%, #d4fc79 100%);
 	background-size: 400% 400%;
 	animation: gradientShift 12s ease infinite;
