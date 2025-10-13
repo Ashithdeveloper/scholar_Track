@@ -17,7 +17,10 @@ export const StudentLogin = ({ setUserToken }) => {
     if (!password) return setError("Password is required");
 
     try {
-      const res = await client.apiPost("/api/user/login", { email, password });
+      const res = await client.apiPost('/api/user/login', { email, password })
+      toast.success(res.message || 'Login successful', {
+        onClose: () => navigate('/')
+      })
 
       if (res.token) {
         localStorage.setItem("token", res.token);

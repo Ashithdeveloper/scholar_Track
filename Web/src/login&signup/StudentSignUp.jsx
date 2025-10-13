@@ -65,7 +65,7 @@ export const StudentSignUp = () => {
       console.log('Signup payload:', payload);
       await client.apiPost('/api/user/studentsignup', payload)
       toast.success('Student registered successfully.', {
-        onClose: () => navigate('/')
+        onClose: () => navigate('/home')
       })
     } catch (err) {
       const resp = err.response?.data || err.original?.response?.data
