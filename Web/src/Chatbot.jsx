@@ -91,7 +91,6 @@ export const Chatbot = ({ userProfile }) => {
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 z-50 w-16 h-16 flex items-center justify-center rounded-full bg-white shadow-2xl border-2 border-blue-400 transition-all duration-300 hover:scale-110 animate-bounce"
         style={{ 
-          bottom: "100px",
           boxShadow: "0 8px 25px rgba(0,0,0,0.2), 0 4px 15px rgba(99,102,241,0.4)" 
         }}
       >
