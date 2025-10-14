@@ -12,7 +12,7 @@ export const FloatingCommunityButton = () => {
   return (
     <div
       className="fixed right-78 z-50"
-      style={{ bottom: "48px", transition: "all 0.3s ease" }} // increased bottom value
+      style={{ bottom: "40px", transition: "all 0.3s ease" }} // increased bottom value
     >
       <button
         onClick={handleClick}
