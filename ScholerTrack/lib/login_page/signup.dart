@@ -56,7 +56,7 @@ class _SignupPageState extends State<SignupPage> {
         selectedInstitutionType == null ||
         selectedEducation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please fill all required fields")),
+        const SnackBar(content: Text("Please fill all required fields")),
       );
       return;
     }
@@ -76,7 +76,8 @@ class _SignupPageState extends State<SignupPage> {
       "lasteducation": selectedEducation,
     };
 
-    final url = Uri.parse("https://scholar-zceo.onrender.com/api/user/studentsignup");
+    final url =
+    Uri.parse("https://scholar-zceo.onrender.com/api/user/studentsignup");
 
     try {
       final response = await http.post(
@@ -88,30 +89,24 @@ class _SignupPageState extends State<SignupPage> {
       setState(() => _isLoading = false);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final token = data['token']; // ✅ get token
+        final responseData = jsonDecode(response.body);
+        final token = responseData['token'];
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text("Signup successful! Redirecting..."),
             backgroundColor: Colors.green,
           ),
         );
 
-        // ✅ Navigate directly to home page (no OTP)
-        Future.delayed(Duration(seconds: 1), () {
+        Future.delayed(const Duration(seconds: 1), () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => MainPage(token: '',)),
+            MaterialPageRoute(builder: (context) => MainPage(token: token)),
           );
         });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Signup failed: ${response.body}"),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
       }
+
     } catch (e) {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -126,15 +121,14 @@ class _SignupPageState extends State<SignupPage> {
   Widget stepCard(Widget content) {
     return Center(
       child: Card(
-        elevation: 10,
+        color: Colors.grey.shade200, // grey card
+        elevation: 8,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        shadowColor: Colors.blue.shade100,
         child: Container(
           width: 350,
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.white,
           ),
           child: content,
         ),
@@ -146,134 +140,64 @@ class _SignupPageState extends State<SignupPage> {
     switch (_currentStep) {
       case 0:
         return Column(
-          key: ValueKey(0),
+          key: const ValueKey(0),
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Sign Up",
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.blue.shade700)),
-            SizedBox(height: 24),
-            TextFormField(
-              controller: fullnameController,
-              decoration: _inputDecoration("Full Name"),
-              validator: (value) => value!.isEmpty ? "Enter full name" : null,
-            ),
-            SizedBox(height: 16),
-            TextFormField(
-              controller: emailController,
-              decoration: _inputDecoration("Email"),
-              validator: (value) {
-                if (value == null || value.isEmpty) return "Enter email";
-                final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                if (!emailRegex.hasMatch(value)) return "Enter valid email";
-                return null;
-              },
-            ),
-            SizedBox(height: 16),
-            TextFormField(
-              controller: passwordController,
-              obscureText: _obscurePassword,
-              decoration: _inputDecoration("Password").copyWith(
-                suffixIcon: IconButton(
-                  icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                ),
+            Text(
+              "Create Account",
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) return "Enter password";
-                if (value.length < 8) return "Password must be 8+ characters";
-                return null;
-              },
             ),
+            const SizedBox(height: 24),
+            _buildTextField(fullnameController, "Full Name"),
+            const SizedBox(height: 16),
+            _buildTextField(emailController, "Email",
+                keyboardType: TextInputType.emailAddress),
+            const SizedBox(height: 16),
+            _buildPasswordField(),
           ],
         );
 
       case 1:
         return Column(
-          key: ValueKey(1),
+          key: const ValueKey(1),
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Personal Info",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue.shade700)),
-            SizedBox(height: 24),
-            DropdownButtonFormField<String>(
-              value: selectedCast,
-              decoration: _inputDecoration("Caste"),
-              items: ["BC", "OC", "SC", "ST", "Other"]
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
-              onChanged: (val) => setState(() => selectedCast = val),
-              validator: (value) => value == null ? "Select caste" : null,
-            ),
-            SizedBox(height: 16),
-            TextFormField(
-              controller: phoneController,
-              keyboardType: TextInputType.number,
-              maxLength: 10,
-              decoration: _inputDecoration("Phone Number").copyWith(counterText: ""),
-              validator: (value) {
-                if (value == null || value.isEmpty) return "Enter phone number";
-                if (value.length != 10) return "Enter valid 10-digit number";
-                return null;
-              },
-            ),
-            SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: selectedGender,
-              decoration: _inputDecoration("Gender"),
-              items: ["Male", "Female", "Other"]
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
-              onChanged: (val) => setState(() => selectedGender = val),
-              validator: (value) => value == null ? "Select gender" : null,
-            ),
+            _stepTitle("Personal Info"),
+            const SizedBox(height: 24),
+            _buildDropdown(
+                "Caste", selectedCast, ["BC", "OC", "SC", "ST", "Other"],
+                    (val) => selectedCast = val),
+            const SizedBox(height: 16),
+            _buildTextField(phoneController, "Phone Number",
+                keyboardType: TextInputType.number, maxLength: 10),
+            const SizedBox(height: 16),
+            _buildDropdown(
+                "Gender", selectedGender, ["Male", "Female", "Other"],
+                    (val) => selectedGender = val),
           ],
         );
 
       case 2:
         return Column(
-          key: ValueKey(2),
+          key: const ValueKey(2),
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Education",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue.shade700)),
-            SizedBox(height: 24),
-            DropdownButtonFormField<String>(
-              value: selectedInstitutionType,
-              decoration: _inputDecoration("Institution Type"),
-              items: ["School", "College"]
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
-              onChanged: (val) => setState(() => selectedInstitutionType = val),
-              validator: (value) => value == null ? "Select institution type" : null,
-            ),
-            SizedBox(height: 16),
-            TextFormField(
-              controller: institutionController,
-              decoration: _inputDecoration("Institution Name"),
-              validator: (value) => value!.isEmpty ? "Enter institution name" : null,
-            ),
-            SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: selectedEducation,
-              decoration: _inputDecoration("Education Level"),
-              items: ["UG", "PG", "Diploma", "Other"]
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
-              onChanged: (val) => setState(() => selectedEducation = val),
-              validator: (value) => value == null ? "Select education" : null,
-            ),
-            SizedBox(height: 16),
-            TextFormField(
-              controller: percentageController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: _inputDecoration("Percentage (%)"),
-              validator: (value) {
-                if (value == null || value.isEmpty) return "Enter percentage";
-                final numValue = double.tryParse(value);
-                if (numValue == null || numValue < 0 || numValue > 100) return "Enter valid percentage (0–100)";
-                return null;
-              },
-            ),
+            _stepTitle("Education Details"),
+            const SizedBox(height: 24),
+            _buildDropdown("Institution Type", selectedInstitutionType,
+                ["School", "College"], (val) => selectedInstitutionType = val),
+            const SizedBox(height: 16),
+            _buildTextField(institutionController, "Institution Name"),
+            const SizedBox(height: 16),
+            _buildDropdown("Education Level", selectedEducation,
+                ["UG", "PG", "Diploma", "Other"], (val) => selectedEducation = val),
+            const SizedBox(height: 16),
+            _buildTextField(percentageController, "Percentage (%)",
+                keyboardType: TextInputType.numberWithOptions(decimal: true)),
           ],
         );
 
@@ -282,52 +206,126 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
-  InputDecoration _inputDecoration(String label) {
-    return InputDecoration(
-      labelText: label,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-      filled: true,
-      fillColor: Colors.blue.shade50.withOpacity(0.3),
+  Widget _stepTitle(String title) => Text(
+    title,
+    style: const TextStyle(
+        fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+  );
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      {TextInputType keyboardType = TextInputType.text, int? maxLength}) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLength: maxLength,
+      style: const TextStyle(color: Colors.black),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.grey.shade700),
+        counterText: "",
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      validator: (value) => value!.isEmpty ? "Enter $label" : null,
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      controller: passwordController,
+      obscureText: _obscurePassword,
+      style: const TextStyle(color: Colors.black),
+      decoration: InputDecoration(
+        labelText: "Password",
+        labelStyle: TextStyle(color: Colors.grey.shade700),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(
+              _obscurePassword ? Icons.visibility_off : Icons.visibility,
+              color: Colors.grey.shade700),
+          onPressed: () {
+            setState(() => _obscurePassword = !_obscurePassword);
+          },
+        ),
+      ),
+      validator: (value) =>
+      value!.length < 8 ? "Password must be 8+ characters" : null,
+    );
+  }
+
+  Widget _buildDropdown(String label, String? selectedValue,
+      List<String> options, Function(String?) onChanged) {
+    return DropdownButtonFormField<String>(
+      value: selectedValue,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.grey.shade700),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      items:
+      options.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      onChanged: (val) => setState(() => onChanged(val)),
+      validator: (value) => value == null ? "Select $label" : null,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: Colors.white, // white background
       body: Form(
         key: _formKey,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedSwitcher(
-              duration: Duration(milliseconds: 400),
+              duration: const Duration(milliseconds: 400),
               transitionBuilder: (child, animation) {
                 final inAnimation = Tween<Offset>(
-                  begin: Offset(_isNext ? 1 : -1, 0),
-                  end: Offset(0, 0),
-                ).animate(animation);
+                    begin: Offset(_isNext ? 1 : -1, 0), end: Offset.zero)
+                    .animate(animation);
                 return SlideTransition(position: inAnimation, child: child);
               },
               child: stepCard(buildStepContent()),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             _isLoading
-                ? CircularProgressIndicator(color: Colors.blue.shade600)
+                ? const CircularProgressIndicator(color: Colors.black)
                 : Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 if (_currentStep > 0)
                   ElevatedButton(
                     onPressed: previousStep,
-                    style: _buttonStyle(Colors.blue.shade300),
-                    child: Text("Back", style: TextStyle(color: Colors.white)),
+                    style: _buttonStyle(Colors.grey.shade700),
+                    child: const Text("Back",
+                        style:
+                        TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ElevatedButton(
                   onPressed: nextStep,
-                  style: _buttonStyle(Colors.blue.shade600),
-                  child: Text(_currentStep == 2 ? "Signup" : "Next",
-                      style: TextStyle(color: Colors.white)),
+                  style: _buttonStyle(Colors.black),
+                  child: Text(
+                      _currentStep == 2 ? "Signup" : "Next",
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 16)),
                 ),
               ],
             ),
@@ -341,7 +339,7 @@ class _SignupPageState extends State<SignupPage> {
     return ElevatedButton.styleFrom(
       backgroundColor: color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      minimumSize: Size(120, 45),
+      minimumSize: const Size(120, 45),
     );
   }
 }

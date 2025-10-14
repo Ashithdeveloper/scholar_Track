@@ -70,112 +70,125 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: Colors.grey.shade100,
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: Colors.grey.shade800))
           : errorMessage != null
           ? Center(
           child: Text(
             errorMessage!,
-            style: TextStyle(color: Colors.red, fontSize: 16),
+            style: TextStyle(color: Colors.red.shade700, fontSize: 16),
           ))
           : userData == null
-          ? Center(child: Text("No user data found"))
+          ? Center(
+          child: Text(
+            "No user data found",
+            style: TextStyle(color: Colors.grey.shade800),
+          ))
           : SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Profile Heading
+            // Heading
             Text(
               "Profile",
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue.shade700,
+                color: Colors.grey.shade900,
+                letterSpacing: 0.5,
               ),
             ),
-            SizedBox(height: 20),
-            // Profile Avatar
-            Center(
+            SizedBox(height: 10),
+            Divider(color: Colors.grey.shade400, thickness: 1),
+            SizedBox(height: 30),
+            // Avatar with premium shadow
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [Colors.grey.shade700, Colors.grey.shade300],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade400.withOpacity(0.6),
+                    blurRadius: 12,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
               child: CircleAvatar(
                 radius: 60,
-                backgroundColor: Colors.blue.shade100,
-                child: Icon(
-                    Icons.person, size: 80, color: Colors.blue.shade700),
+                backgroundColor: Colors.grey.shade100,
+                child: Icon(Icons.person, size: 80, color: Colors.grey.shade800),
               ),
             ),
-            SizedBox(height: 30),
-            // Details Card
-            Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    double spacing = 12; // space between cards
-                    double width = (constraints.maxWidth - spacing) /
-                        2; // 2 per row
-                    return Wrap(
-                      spacing: spacing,
-                      runSpacing: spacing,
-                      children: [
-                        _infoCard(
-                            widget.translate("fullname"), userData!['fullname'],
-                            width),
-                        _infoCard(widget.translate("email"), userData!['email'],
-                            width),
-                        _infoCard(widget.translate("phone"),
-                            "${userData!['phoneNumber']}", width),
-                        _infoCard(
-                            widget.translate("gender"), userData!['gender'],
-                            width),
-                        _infoCard(widget.translate("caste"), userData!['caste'],
-                            width),
-                        _infoCard(widget.translate("marks"),
-                            "${userData!['percentage']}%", width),
-                        _infoCard(widget.translate("institution"),
-                            userData!['institution'], width),
-                        _infoCard(
-                            widget.translate("category"), userData!['category'],
-                            width),
-                        _infoCard(widget.translate("education"),
-                            userData!['lasteducation'], width),
-                      ],
-                    );
-                  },
-                ),
-              ),
+            SizedBox(height: 40),
+            // Info Cards
+            Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                _infoCard(Icons.person, "Full Name", userData!['fullname']),
+                _infoCard(Icons.email, "Email", userData!['email']),
+                _infoCard(Icons.phone, "Phone", "${userData!['phoneNumber']}"),
+                _infoCard(Icons.transgender, "Gender", userData!['gender']),
+                _infoCard(Icons.group, "Caste", userData!['caste']),
+                _infoCard(Icons.grade, "Marks", "${userData!['percentage']}%"),
+                _infoCard(Icons.school, "Institution", userData!['institution']),
+                _infoCard(Icons.category, "Category", userData!['category']),
+                _infoCard(Icons.menu_book, "Education", userData!['lasteducation']),
+              ],
             ),
-
           ],
         ),
       ),
     );
   }
 
-  Widget _infoCard(String title, String? value, double width) {
+  Widget _infoCard(IconData icon, String title, String? value) {
     return Container(
-      width: width,
-      padding: EdgeInsets.all(12),
+      width: (MediaQuery.of(context).size.width - 72) / 2,
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue.shade100),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade300,
+            blurRadius: 12,
+            offset: Offset(0, 6),
+          ),
+          BoxShadow(
+            color: Colors.grey.shade50,
+            blurRadius: 6,
+            offset: Offset(-2, -2),
+          ),
+        ],
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade700,
-              )),
-          SizedBox(height: 6),
-          Text(value ?? 'N/A', style: TextStyle(fontSize: 16)),
+          Icon(icon, color: Colors.grey.shade800, size: 28),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade900,
+                        fontSize: 14)),
+                SizedBox(height: 6),
+                Text(value ?? 'N/A',
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade700)),
+              ],
+            ),
+          ),
         ],
       ),
     );

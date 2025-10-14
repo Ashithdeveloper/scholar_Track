@@ -20,6 +20,8 @@ class MyApp extends StatelessWidget {
         '/login': (_) => LoginPage(),
         '/signup': (_) => SignupPage(),
       },
+      debugShowCheckedModeBanner: false, 
+
     );
   }
 }

@@ -20,13 +20,13 @@ class _LoginPageState extends State<LoginPage> {
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please enter email and password")),
+        const SnackBar(content: Text("Please enter email and password")),
       );
       return;
     }
 
     setState(() {
-      _isLoading = true; // show loading spinner
+      _isLoading = true;
     });
 
     try {
@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       setState(() {
-        _isLoading = false; // hide loading spinner
+        _isLoading = false;
       });
 
       if (response.statusCode == 200) {
@@ -45,10 +45,9 @@ class _LoginPageState extends State<LoginPage> {
         final token = data['token'];
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Login Successful!")),
+          const SnackBar(content: Text("Login Successful!")),
         );
 
-        // Navigate to MainPage and pass the token
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -73,102 +72,136 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: Colors.white, // White background
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24),
-          child: Card(
-            elevation: 12,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            shadowColor: Colors.blue.shade100,
-            child: Container(
-              padding: EdgeInsets.all(24),
-              width: 350,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              // 🏛️ App Name
+              Text(
+                "ScholarTrack",
+                style: TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  letterSpacing: 1.2,
+                ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Welcome Back",
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade700,
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  TextField(
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: "Email",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  TextField(
-                    controller: passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      suffixIcon: IconButton(
-                        icon: Icon(_obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : login,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade600,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 10),
+              Text(
+                "Welcome Back",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.grey.shade700,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // 🧾 Grey Card
+              Card(
+                color: Colors.grey.shade200,
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  width: 360,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        style: const TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          labelText: "Email",
+                          labelStyle: TextStyle(color: Colors.grey.shade700),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
-                      child: _isLoading
-                          ? CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                          : Text("Login"),
-                    ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: passwordController,
+                        obscureText: _obscurePassword,
+                        style: const TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          labelText: "Password",
+                          labelStyle: TextStyle(color: Colors.grey.shade700),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Colors.grey.shade700,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : login,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                              : const Text(
+                            "Login",
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 16),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                          Navigator.pushNamed(context, '/signup');
+                        },
+                        child: Text(
+                          "Don't have an account? Sign Up",
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 14),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 16),
-                  TextButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                      Navigator.pushNamed(context, '/signup');
-                    },
-                    child: Text(
-                      "Don't have an account? Sign Up",
-                      style: TextStyle(color: Colors.blue.shade700),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),

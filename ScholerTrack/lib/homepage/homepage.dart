@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'notificationpage.dart';
 import 'scholardetailpage.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,6 +23,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static List<Map<String, dynamic>> _cachedScholarships = [];
+  static bool _hasLoaded = false;
+
   final List<String> categories = [
     "Government",
     "Private",
@@ -38,7 +42,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    fetchScholarships();
+    if (_hasLoaded && _cachedScholarships.isNotEmpty) {
+      setState(() {
+        scholarships = _cachedScholarships;
+        isLoading = false;
+      });
+    } else {
+      fetchScholarships();
+    }
   }
 
   Future<void> fetchScholarships() async {
@@ -46,7 +57,10 @@ class _HomePageState extends State<HomePage> {
     try {
       final response = await http.get(
         url,
-        headers: {"Authorization": "Bearer ${widget.token}", "Content-Type": "application/json"},
+        headers: {
+          "Authorization": "Bearer ${widget.token}",
+          "Content-Type": "application/json"
+        },
       );
 
       if (response.statusCode == 200) {
@@ -54,6 +68,8 @@ class _HomePageState extends State<HomePage> {
         if (data['success'] == true && data['scholarships'] != null) {
           setState(() {
             scholarships = List<Map<String, dynamic>>.from(data['scholarships']);
+            _cachedScholarships = scholarships;
+            _hasLoaded = true;
             isLoading = false;
           });
         } else {
@@ -70,7 +86,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: Colors.grey.shade100,
       body: SafeArea(
         child: Column(
           children: [
@@ -80,18 +96,58 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(widget.translate("appName"),
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blue.shade700)),
-                  ElevatedButton(
-                    onPressed: widget.onLanguageChange,
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade600,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                    child: Text(widget.language),
+                  // Left: Education icon + App name
+                  Row(
+                    children: [
+                      Icon(Icons.school_rounded, color: Colors.black87, size: 30),
+                      const SizedBox(width: 8),
+                      Text(
+                        widget.translate("appName"),
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Right: Language button + Notification icon
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: widget.onLanguageChange,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black87,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12))),
+                        child: Text(widget.language,
+                            style: const TextStyle(color: Colors.white)),
+                      ),
+                      const SizedBox(width: 12),
+                      IconButton(
+                        icon: const Icon(Icons.notifications_rounded),
+                        color: Colors.black87,
+                        onPressed: () {
+                          // Navigate to Notifications Page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => NotificationsPage(
+                                language: widget.language,
+                                onLanguageChange: widget.onLanguageChange,
+                                translate: widget.translate,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
+
 
             // Category Tabs
             Container(
@@ -109,13 +165,16 @@ class _HomePageState extends State<HomePage> {
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       margin: EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(
-                        color: isSelected ? Colors.blue.shade600 : Colors.white,
+                        color: isSelected ? Colors.black87 : Colors.grey.shade300,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.blue.shade200),
+                        border: Border.all(
+                            color: isSelected ? Colors.black87 : Colors.grey.shade400),
                       ),
                       child: Center(
                         child: Text(widget.translate(category),
-                            style: TextStyle(color: isSelected ? Colors.white : Colors.blue.shade700, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                color: isSelected ? Colors.white : Colors.black87,
+                                fontWeight: FontWeight.bold)),
                       ),
                     ),
                   );
@@ -125,32 +184,36 @@ class _HomePageState extends State<HomePage> {
 
             SizedBox(height: 16),
 
+            // Scholarships List
             Expanded(
               child: isLoading
                   ? Center(child: CircularProgressIndicator())
                   : scholarships.isEmpty
-                  ? Center(child: Text("No scholarships available"))
+                  ? Center(child: Text("No scholarships available", style: TextStyle(color: Colors.grey.shade700)))
                   : ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 itemCount: scholarships.length,
                 itemBuilder: (context, index) {
                   final s = scholarships[index];
 
-                  String provider = s['providerName']?.toString().trim() ??
-                      s['providerName ']?.toString().trim() ??
-                      s['provider']?.toString().trim() ??
-                      'Unknown';
+                  String provider =
+                      s['providerName']?.toString().trim() ??
+                          s['providerName ']?.toString().trim() ??
+                          s['provider']?.toString().trim() ??
+                          'Unknown';
 
-                  // Handle provider sector safely
-                  String sector = s['provider_sector']?.toString().trim() ??
-                      s['provider_sector ']?.toString().trim() ??
-                      s['providerSector']?.toString().trim() ??
-                      'N/A';
+                  String sector =
+                      s['provider_sector']?.toString().trim() ??
+                          s['provider_sector ']?.toString().trim() ??
+                          s['providerSector']?.toString().trim() ??
+                          'N/A';
 
                   return Card(
                     margin: EdgeInsets.only(bottom: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    elevation: 6,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    elevation: 2,
+                    color: Colors.white,
                     child: Padding(
                       padding: EdgeInsets.all(16),
                       child: Column(
@@ -161,13 +224,17 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue.shade700),
+                                color: Colors.black87),
                           ),
                           SizedBox(height: 8),
-                          Text("Provider: $provider"),
-                          Text("Provider Sector: $sector"),
-                          Text("Prize: ${s['scholar_prize'] ?? 'N/A'}"),
-                          Text("Deadline: ${s['deadline'] ?? 'N/A'}"),
+                          Text("Provider: $provider",
+                              style: TextStyle(color: Colors.grey.shade800)),
+                          Text("Provider Sector: $sector",
+                              style: TextStyle(color: Colors.grey.shade800)),
+                          Text("Prize: ${s['scholar_prize'] ?? 'N/A'}",
+                              style: TextStyle(color: Colors.grey.shade800)),
+                          Text("Deadline: ${s['deadline'] ?? 'N/A'}",
+                              style: TextStyle(color: Colors.grey.shade800)),
                           SizedBox(height: 12),
                           Align(
                             alignment: Alignment.centerRight,
@@ -176,11 +243,15 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => ScholarshipDetailPage(scholarship: s),
+                                    builder: (_) =>
+                                        ScholarshipDetailPage(scholarship: s),
                                   ),
                                 );
                               },
-                              child: Text("View Details"),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black87),
+                              child: const Text("View Details",
+                                  style: TextStyle(color: Colors.white)),
                             ),
                           )
                         ],
@@ -190,7 +261,6 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-
           ],
         ),
       ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scholartracker/homepage/communitypage.dart';
+import '../community/homepage.dart';
 import 'homepage.dart';
 import 'searchpage.dart';
 import 'profilepage.dart';
@@ -90,7 +92,6 @@ class _MainPageState extends State<MainPage> {
     }
   };
 
-
   String translate(String key) {
     return translations[language]![key] ?? key;
   }
@@ -102,23 +103,25 @@ class _MainPageState extends State<MainPage> {
       SearchPage(language: language, onLanguageChange: changeLanguage, translate: translate, scholarships: [],),
       ProfilePage(language: language, onLanguageChange: changeLanguage, translate: translate, token: widget.token,),
       DashboardPage(language: language, onLanguageChange: changeLanguage, translate: translate),
-      NotificationsPage(language: language, onLanguageChange: changeLanguage, translate: translate),
+      CommunityHomePage(language: language, onLanguageChange: changeLanguage, translate: translate),
     ];
 
     return Scaffold(
+      backgroundColor: Colors.grey.shade100, // light grey background
       body: pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white, // white background
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
-        selectedItemColor: Colors.blue.shade700,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.black87, // selected icon & text → dark black
+        unselectedItemColor: Colors.grey.shade600, // unselected → medium grey
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: translate("home")),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: translate("search")),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: translate("profile")),
           BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: translate("dashboard")),
-          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: translate("notifications")),
+          BottomNavigationBarItem(icon: Icon(Icons.group), label: translate("community")),
         ],
       ),
     );
