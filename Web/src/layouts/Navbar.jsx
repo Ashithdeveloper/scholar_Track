@@ -40,7 +40,7 @@ export const Navbar = ({ handleLogout }) => {
             const isActive = location.pathname === item.path;
             const Icon = item.icon;
             return (
-              <div key={idx} onClick={() => navigate(item.path)} className={`flex items-center gap-2 px-3 py-1 rounded-lg cursor-pointer transition-all ${isActive ? "text-blue-700 bg-blue-50 shadow-sm scale-105" : "hover:text-blue-600 hover:bg-gray-100"}`}>
+              <div key={idx} onClick={() => navigate(item.path)} className={`flex items-center gap-2 px-2 py-1 rounded-lg cursor-pointer transition-all ${isActive ? "text-blue-700 bg-blue-50 shadow-sm scale-105" : "hover:text-blue-600 hover:bg-gray-100"}`}>
                 <Icon className="text-xl" />
                 <span className="hidden sm:inline text-sm">{item.label}</span>
               </div>
